@@ -3,30 +3,27 @@ import sys
 import subprocess as sp
 import ntpath 
 import json 
+#Set mode for development 
+#mode = os.environ['mode'] = "Production"
 
-#These env setters are for development purposes and will be received by the Alfred workflow in production.
-os.environ["query"] = sys.argv[1]
-os.environ["searchFolder"] = sys.argv[2]
+#Get upstream environment variables
+mode = os.getenv('mode')
+query = sys.argv[1]
+searchFolder = os.getenv('searchFolder') if mode == "Production" else sys.argv[2]
+limit = os.getenv('limit') if mode == "Production" else sys.argv[3]
 
-#Get upstream environment variables from the Alfred workflow
-searchFolder = os.getenv("searchFolder")
-query = os.getenv("query")
-
-#Mdfind is a leaner version 
-bashCmd = "mdfind 'kMDItemFSName = " + query + "*.pdf" + "' -onlyin " + '"' + searchFolder + '"'
-print(bashCmd)
+#Mdfind is a native Mac OS X command to search a Spotlight index.
+bashCmd = "mdfind 'kMDItemFSName = " + query + "*.pdf" + "' -onlyin " + '"' + searchFolder + '"' + " | head -n " + limit
 proc = sp.check_output(bashCmd, shell=True)
 result = proc.decode("UTF-8").splitlines()
 
 resultDict = {"items": []}
 resultLst = []
-
 for line in result:
    resultLst.append({"title": query, "subtitle": line, "arg": line})
-
 resultDict["items"] = resultLst
 resultJSON = json.dumps(resultDict)
-sys.stdout.write(resultJSON)
 
+sys.stdout.write(resultJSON)
 
 
