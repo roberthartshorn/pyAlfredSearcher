@@ -4,7 +4,7 @@ import subprocess as sp
 import json 
 
 #Set mode for development 
-#mode = os.environ['mode'] = ""
+#os.environ['mode'] = ""
 
 #Get upstream environment variables
 mode = os.getenv('mode')
@@ -13,7 +13,7 @@ searchFolder = os.getenv('searchFolder') if mode == "Production" else sys.argv[2
 limit = os.getenv('limit') if mode == "Production" else sys.argv[3]
 
 #Mdfind is a native Mac OS X command to search a Spotlight index.
-bashCmd = "mdfind 'kMDItemFSName = " + '"' + query + '*"'  + "' -onlyin " + '"' + searchFolder + '"' + " | head -n " + limit
+bashCmd = "mdfind 'kMDItemFSName = " + '"' + query + '*"c'  + "' -onlyin " + '"' + searchFolder + '"' + " | head -n " + limit
 proc = sp.check_output(bashCmd, shell=True)
 result = proc.decode("UTF-8").splitlines()
 
