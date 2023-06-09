@@ -4,7 +4,7 @@ import subprocess as sp
 import json 
 
 #Set mode for development 
-#os.environ['mode'] = ""
+os.environ['mode'] = "development"
 
 #Get upstream environment variables
 mode = os.getenv('mode')
@@ -20,7 +20,12 @@ result = proc.decode("UTF-8").splitlines()
 resultDict = {"items": []}
 resultLst = []
 for line in result:
-   resultLst.append({"title": os.path.basename(line), "subtitle": line, "arg": line})
+   resultLst.append({
+      "type": "file",
+      "title": os.path.basename(line), 
+      "subtitle": line, 
+      "arg": line
+   })
 resultDict["items"] = resultLst
 resultJSON = json.dumps(resultDict)
 
